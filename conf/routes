@@ -5,5 +5,14 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index()
 
+# User CRUD
+GET     /users                      controllers.UserController.getAll
+GET     /create_user                controllers.UserController.create(username: String, password: String)
+GET     /users/:username            controllers.UserController.getByName(username: String)
+
+# Sighting CRUD
+GET     /sightings                  controllers.SightingController.getAll
+GET     /create_sighting            controllers.SightingController.create(latitude: Double, longitude: Double, creator: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
