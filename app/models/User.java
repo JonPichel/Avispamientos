@@ -1,8 +1,12 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 public class User {
@@ -10,9 +14,11 @@ public class User {
     private String username;
     @Column private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
     private List<Sighting> sightings;
 
+    @JsonIgnore
     @OneToMany (mappedBy = "contributor", fetch = FetchType.EAGER)
     private List<Confirmation> confirmations;
 
@@ -45,5 +51,15 @@ public class User {
 
     public void addSighting(Sighting sighting) {
         sightings.add(sighting);
+    }
+
+    @JsonProperty("sightings")
+    public List<String> getSightingIds() {
+        return sightings.stream().map(Sighting::getId).collect(Collectors.toList());
+    }
+
+    @JsonProperty("confirmations")
+    public List<String> getConfirmationIds() {
+        return confirmations.stream().map(Confirmation::getId).collect(Collectors.toList());
     }
 }

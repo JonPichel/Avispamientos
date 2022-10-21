@@ -6,11 +6,9 @@ import models.Sighting;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
-import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.stream.Stream;
-
-import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class SightingDao extends Dao {
 
@@ -20,16 +18,22 @@ public class SightingDao extends Dao {
     }
 
     public CompletionStage<Sighting> save(Sighting sighting) {
-        return supplyAsync(() -> wrap(em -> {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
             em.persist(sighting);
             return sighting;
         }), executionContext);
     }
 
     public CompletionStage<Stream<Sighting>> getAll() {
-        return supplyAsync(() -> wrap(em -> {
-            List<Sighting> sightings = em.createQuery("SELECT sighting FROM Sighting sighting", Sighting.class).getResultList();
-            return sightings.stream();
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            return em.createQuery("SELECT sighting FROM Sighting sighting", Sighting.class)
+                .getResultList().stream();
+        }), executionContext);
+    }
+
+    public CompletionStage<Sighting> getById(String id) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            return em.find(Sighting.class, id);
         }), executionContext);
     }
 }

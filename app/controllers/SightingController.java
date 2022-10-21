@@ -4,6 +4,7 @@ import database.daos.SightingDao;
 import database.daos.UserDao;
 import models.Sighting;
 import models.User;
+import play.mvc.Controller;
 import play.mvc.Result;
 import play.libs.concurrent.HttpExecutionContext;
 
@@ -14,7 +15,7 @@ import java.util.stream.Collectors;
 import static play.libs.Json.toJson;
 import static play.mvc.Results.ok;
 
-public class SightingController {
+public class SightingController extends Controller {
 
     private final UserDao userDao;
     private final SightingDao sightingDao;
@@ -27,18 +28,29 @@ public class SightingController {
         this.executionContext = executionContext;
     }
 
+    public CompletionStage<Result> create(double latitude, double longitude, String creator) {
+        return userDao.getByName(creator).thenApplyAsync(user -> {
+                if (user == null) {
+                    return null;
+                } else {
+                    Sighting sighting = new Sighting("", latitude, longitude, user);
+                    sightingDao.save(sighting);
+                    return sighting;
+                }
+            }, executionContext.current())
+            .thenApplyAsync(created_sighting -> {
+                if (created_sighting == null) {
+                    return ok("Creator not found: " + creator);
+                } else {
+                    return ok("Created sighting: " + toJson(created_sighting));
+                }
+            }, executionContext.current());
+    }
+
     public CompletionStage<Result> getAll() {
         return sightingDao
             .getAll()
-            .thenApplyAsync(userStream -> ok(toJson(userStream.collect(Collectors.toList()))), executionContext.current());
-    }
-
-    public Result create(double latitude, double longitude, String creator) {
-        User user = userDao.getByName(creator).toCompletableFuture().join();
-
-        Sighting sighting = new Sighting("", latitude, longitude, user);
-        sightingDao.save(sighting).toCompletableFuture().join();
-
-        return ok(toJson(sighting));
+            .thenApplyAsync(sightingStream -> ok(toJson(sightingStream.collect(Collectors.toList()))),
+                executionContext.current());
     }
 }
