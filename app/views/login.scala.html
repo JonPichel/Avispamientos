@@ -1,0 +1,45 @@
+@import helper._
+
+@(error: String)(implicit request: Http.Request)
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Avispamientos - Login</title>
+        @* Stylesheets *@
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/form.css")">
+        @* JQuery *@
+        <script src="@routes.Assets.versioned("javascripts/jquery-3.6.1.js")"></script>
+        @* Leaflet *@
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/leaflet.css")">
+        <script src="@routes.Assets.versioned("javascripts/leaflet.js")"></script>
+    </head>
+    <body>
+        <div id="container">
+            <div id="nav">
+                <a class="active" href="/">Home</a>
+                <a style="float: right" href="/register">Register</a>
+                <a style="float: right" href="/login">Login</a>
+            </div>
+            <div id="content">
+                <form action="/login" method="POST">
+                    <div class="img-container">
+                        <img src="@routes.Assets.versioned("images/favicon.png")" alt="Logo">
+                    </div>
+                    <label for="username"><b>Username</b></label>
+                    <input type="text" placeholder="Enter Username" name="username" required>
+                    <label for="password"><b>Password</b></label>
+                    <input type="password" placeholder="Enter Password" name="password" required>
+                    @CSRF.formField
+                    @if(error != null) {
+                        <div style="visibility: visible" id="error-msg"><b>@error</b></div>
+                    } else {
+                        <div style="visibility: hidden" id="error-msg"><b>This is an error message</b></div>
+                    }
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+    </body>
+</html>

@@ -33,13 +33,13 @@ public class UserDao extends Dao {
         }), executionContext);
     }
 
-    public CompletionStage<User> getByName(String username) {
+    public CompletionStage<User> findByName(String username) {
         return CompletableFuture.supplyAsync(() -> wrap(em -> {
             return em.find(User.class, username);
         }), executionContext);
     }
 
-    public CompletionStage<User> getByNameAndPassword(String username, String password) {
+    public CompletionStage<User> findByNameAndPassword(String username, String password) {
         return CompletableFuture.supplyAsync(() -> wrap(em -> {
             try {
                 return em.createQuery(

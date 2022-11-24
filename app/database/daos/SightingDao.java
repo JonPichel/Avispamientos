@@ -31,7 +31,7 @@ public class SightingDao extends Dao {
         }), executionContext);
     }
 
-    public CompletionStage<Sighting> getById(String id) {
+    public CompletionStage<Sighting> findById(String id) {
         return CompletableFuture.supplyAsync(() -> wrap(em -> {
             return em.find(Sighting.class, id);
         }), executionContext);

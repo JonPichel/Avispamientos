@@ -35,8 +35,8 @@ public class ConfirmationController extends Controller {
 
     public CompletionStage<Result> create(String sightingId, String contributor) {
         System.out.println(sightingId + " " + contributor);
-        return userDao.getByName(contributor)
-            .thenCombineAsync(sightingDao.getById(sightingId), (user, sighting) -> new Pair(user, sighting))
+        return userDao.findByName(contributor)
+            .thenCombineAsync(sightingDao.findById(sightingId), (user, sighting) -> new Pair(user, sighting))
             .thenApplyAsync(pair -> {
                 User user = (User)pair.first();
                 Sighting sighting = (Sighting)pair.second();

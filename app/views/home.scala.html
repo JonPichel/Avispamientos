@@ -1,0 +1,28 @@
+@()
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Avispamientos - Map view</title>
+        @* Stylesheets *@
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+        @* JQuery *@
+        <script src="@routes.Assets.versioned("javascripts/jquery-3.6.1.js")"></script>
+        @* Leaflet *@
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/leaflet.css")">
+        <script src="@routes.Assets.versioned("javascripts/leaflet.js")"></script>
+    </head>
+    <body>
+        <div id="container">
+            <div id="nav">
+                <a class="active" href="/">Home</a>
+                <a style="float: right" href="/register">Register</a>
+                <a style="float: right" href="/login">Login</a>
+            </div>
+            <div id="content">
+                <div id="map"></div>
+            </div>
+        </div>
+        <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
+    </body>
+</html>

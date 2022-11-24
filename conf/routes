@@ -2,18 +2,20 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
-GET     /                           controllers.HomeController.index
+GET     /                           controllers.HomeController.homePage
+GET     /login                      controllers.UserController.loginPage(request: Request)
+GET     /register                   controllers.UserController.registerPage(request: Request)
 
 # User CRUD
+POST    /login                      controllers.UserController.login(request: Request)
+POST    /register                   controllers.UserController.register(request: Request)
 GET     /users                      controllers.UserController.getAll
-GET     /create_user                controllers.UserController.create(username: String, password: String)
 GET     /users/:username            controllers.UserController.getByName(username: String)
-GET     /login                      controllers.UserController.login(username: String, password: String)
 
 # Sighting CRUD
 GET     /sightings                  controllers.SightingController.getAll
 GET     /create_sighting            controllers.SightingController.create(latitude: Double, longitude: Double, creator: String)
+GET     /sighting_creator           controllers.SightingController.getCreator(sightingId: String)
 
 # Confirmation CRUD
 GET     /confirmations              controllers.ConfirmationController.getAll

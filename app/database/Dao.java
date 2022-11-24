@@ -2,7 +2,6 @@ package database;
 
 import play.db.jpa.JPAApi;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import java.util.function.Function;
 

@@ -1,0 +1,51 @@
+@import "main.css";
+
+#content {
+    background-color: var(--gray);
+}
+
+form {
+    border: 3px solid var(--yellow);
+    background-color: var(--black);
+    flex-grow: 1;
+    padding: 30px;
+    margin: 5% auto;
+    width: 300px;
+}
+
+.img-container, input {
+    width: 100%;
+    margin: 10px 0;
+    color: var(--white);
+}
+
+input {
+    background-color: var(--gray);
+}
+
+input::placeholder {
+    color: var(--white);
+}
+
+label {
+    color: var(--white);
+}
+
+button[type=submit] {
+    width: 40%;
+    padding: 5px;
+    border: 2px solid var(--yellow);
+    background-color: var(--black);
+    color: var(--white);
+    border-radius: 3px;
+    margin: 10px 0 0 0;
+}
+
+button:hover {
+    border: 2px solid var(--green);
+    color: var(--white);
+}
+
+#error-msg {
+    color: var(--red);
+}
