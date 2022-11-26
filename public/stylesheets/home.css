@@ -1,0 +1,47 @@
+@import "theme.css";
+
+button {
+    position: absolute;
+    padding: 10px;
+    z-index: 400;
+    background-color: var(--black);
+    color: var(--white);
+    border-radius: 6px;
+    border: 3px solid var(--yellow);
+    width: 120px;
+}
+
+
+button:hover {
+    border: 3px solid var(--green);
+}
+
+#locate-btn {
+    top: 20px;
+    right: 20px;
+}
+
+#add-btn {
+    top: 80px;
+    right: 20px;
+}
+
+.purple-marker {
+    filter: hue-rotate(60deg);
+}
+
+.pink-marker {
+    filter: hue-rotate(120deg);
+}
+
+.orange-marker {
+    filter: hue-rotate(180deg);
+}
+
+.green-marker {
+    filter: hue-rotate(240deg);
+}
+
+.rotate-hue {
+    filter: hue-rotate(190deg);
+}

@@ -35,6 +35,7 @@ html, body, #container {
 
 #content {
     flex-grow: 1;
+    position: relative;
 }
 
 #map {

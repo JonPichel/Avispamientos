@@ -3,12 +3,10 @@ package controllers;
 import database.daos.UserDao;
 import models.User;
 import play.data.FormFactory;
-import play.filters.csrf.CSRF;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import play.mvc.Results;
 
 import javax.inject.Inject;
 import java.util.Map;

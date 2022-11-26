@@ -6,11 +6,16 @@
         <title>Avispamientos - Map view</title>
         @* Stylesheets *@
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/home.css")">
         @* JQuery *@
         <script src="@routes.Assets.versioned("javascripts/jquery-3.6.1.js")"></script>
         @* Leaflet *@
-        <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/leaflet.css")">
-        <script src="@routes.Assets.versioned("javascripts/leaflet.js")"></script>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@@1.9.3/dist/leaflet.css"
+            integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI="
+            crossorigin="">
+        <script src="https://unpkg.com/leaflet@@1.9.3/dist/leaflet.js"
+            integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM="
+            crossorigin=""></script>
     </head>
     <body>
         <div id="container">
@@ -22,8 +27,12 @@
             </div>
             <div id="content">
                 <div id="map"></div>
+                <button id="add-btn">Add new</button>
+                <button id="locate-btn">Locate me</button>
             </div>
         </div>
+
+        <script src="@routes.Assets.versioned("javascripts/cookies.js")"></script>
         <script src="@routes.Assets.versioned("javascripts/main.js")"></script>
     </body>
 </html>
