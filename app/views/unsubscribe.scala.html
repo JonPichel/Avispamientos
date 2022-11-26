@@ -5,7 +5,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Avispamientos - Login</title>
+        <title>Avispamientos - Unsubscribe</title>
         @* Stylesheets *@
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/form.css")">
@@ -24,10 +24,7 @@
                 <a style="float: right" href="/unsubscribe">Unsubscribe</a>
             </div>
             <div id="content">
-                <form action="/register" onsubmit="return validateForm()" method="POST">
-                    <div class="img-container">
-                        <img src="@routes.Assets.versioned("images/favicon.png")" alt="Logo">
-                    </div>
+                <form action="/unsubscribe" onsubmit="return validateForm()" method="POST">
                     <label for="username"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="username" required>
                     <label for="password"><b>Password</b></label>
@@ -36,11 +33,11 @@
                     <input type="password" placeholder="Repeat Password" name="password2" required>
                     @CSRF.formField
                     @if(error != null) {
-                        <div style="visibility: visible" id="error-msg">@error</div>
+                        <div style="visibility: visible" id="error-msg"><b>@error</b></div>
                     } else {
-                        <div style="visibility: hidden" id="error-msg">This is an error message</div>
+                        <div style="visibility: hidden" id="error-msg"><b>This is an error message</b></div>
                     }
-                    <button type="submit">Register</button>
+                    <button type="submit">Delete Account</button>
                 </form>
             </div>
         </div>

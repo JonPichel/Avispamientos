@@ -5,10 +5,12 @@
 GET     /                           controllers.HomeController.homePage
 GET     /login                      controllers.UserController.loginPage(request: Request)
 GET     /register                   controllers.UserController.registerPage(request: Request)
+GET     /unsubscribe                controllers.UserController.unsubscribePage(request: Request)
 
 # User CRUD
 POST    /login                      controllers.UserController.login(request: Request)
 POST    /register                   controllers.UserController.register(request: Request)
+POST    /unsubscribe                controllers.UserController.unsubscribe(request: Request)
 GET     /users                      controllers.UserController.getAll
 GET     /users/:username            controllers.UserController.getByName(username: String)
 

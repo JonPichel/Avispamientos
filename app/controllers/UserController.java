@@ -37,6 +37,10 @@ public class UserController extends Controller {
         return ok(views.html.register.render(null, request));
     }
 
+    public Result unsubscribePage(Http.Request request) {
+        return ok(views.html.unsubscribe.render(null, request));
+    }
+
     public CompletionStage<Result> register(Http.Request request) {
         Map<String, String[]> params = request.body().asFormUrlEncoded();
         if (!params.containsKey("username") || !params.containsKey("password")) {
@@ -74,6 +78,24 @@ public class UserController extends Controller {
                     return ok("Logged in: " + toJson(user));
                 }
             }, executionContext.current());
+    }
+
+    public CompletionStage<Result> unsubscribe(Http.Request request) {
+        Map<String, String[]> params = request.body().asFormUrlEncoded();
+        if (!params.containsKey("username") || !params.containsKey("password")) {
+            return CompletableFuture.supplyAsync(() -> ok(views.html.unsubscribe.render("Bad request", request)));
+        }
+        String username = params.get("username")[0];
+        String password = params.get("password")[0];
+        return userDao.findByNameAndPassword(username, password)
+                .thenApplyAsync(existing_user -> {
+                    if (existing_user == null) {
+                        return ok("User does not exist");
+                    }
+                    else {
+                        return ok("User deleted correctly");
+                    }
+                }, executionContext.current());
     }
 
     public CompletionStage<Result> getAll() {
