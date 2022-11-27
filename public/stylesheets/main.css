@@ -33,6 +33,13 @@ html, body, #container {
     color: var(--white);
 }
 
+#nav p {
+    display: inline-block;
+    vertical-align: middle;
+    padding: 0 18px;
+    color: var(--white);
+}
+
 #content {
     flex-grow: 1;
     position: relative;

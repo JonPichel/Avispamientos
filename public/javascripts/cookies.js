@@ -8,7 +8,7 @@ function setCookie(key, value, secondsToExpire) {
 function getCookie(key) {
     let name = key + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
-    let cookies = decodedCookie.split(',');
+    let cookies = decodedCookie.split(';');
     for(let i = 0; i < cookies.length; i++) {
         let cookie = cookies[i];
         while (cookie.charAt(0) === ' ') {

@@ -2,10 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET     /                           controllers.HomeController.homePage
+GET     /                           controllers.HomeController.homePage(request: Request)
 GET     /login                      controllers.UserController.loginPage(request: Request)
 GET     /register                   controllers.UserController.registerPage(request: Request)
 GET     /unsubscribe                controllers.UserController.unsubscribePage(request: Request)
+GET     /logout                     controllers.UserController.logout(request: Request)
 
 # User CRUD
 POST    /login                      controllers.UserController.login(request: Request)
@@ -15,8 +16,8 @@ GET     /users                      controllers.UserController.getAll
 GET     /users/:username            controllers.UserController.getByName(username: String)
 
 # Sighting CRUD
-GET     /sightings                  controllers.SightingController.getAll
-GET     /create_sighting            controllers.SightingController.create(latitude: Double, longitude: Double, creator: String)
+GET     /sightings                  controllers.SightingController.getNearSightings(latitude: Double, longitude: Double, radius: Int)
+POST    /sighting                   controllers.SightingController.create(request: Request)
 GET     /sighting_creator           controllers.SightingController.getCreator(sightingId: String)
 
 # Confirmation CRUD

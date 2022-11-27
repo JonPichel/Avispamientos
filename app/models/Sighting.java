@@ -3,6 +3,8 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.GenericGenerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -28,6 +30,9 @@ public class Sighting {
     @JsonIgnore
     @OneToMany(mappedBy = "sighting", fetch = FetchType.EAGER)
     private List<Confirmation> confirmations;
+
+    @Transient
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public Sighting(String data, double latitude, double longitude, User creator) {
         this.data = data;
@@ -73,5 +78,18 @@ public class Sighting {
     @JsonProperty("confirmations")
     public List<String> getConfirmationIds() {
         return confirmations.stream().map(Confirmation::getId).collect(Collectors.toList());
+    }
+
+    public int distanceToCoords(double latitude, double longitude) {
+        double lat2 = latitude * Math.PI / 180.0;
+        double lat1 = this.latitude * Math.PI / 180.0;
+        double dLat = (latitude - this.latitude) * Math.PI / 180.0;
+        double dLon = (longitude - this.longitude) * Math.PI / 180.0;
+        double a = Math.pow(Math.sin(dLat/2), 2) +
+            Math.cos(lat2) * Math.cos(lat1) * Math.pow(Math.sin(dLon/2), 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        logger.warn("Testing 2");
+        logger.warn(Double.toString(6371_000 * c));
+        return (int)Math.round(6371_000 * c);
     }
 }

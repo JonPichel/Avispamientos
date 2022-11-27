@@ -2,7 +2,6 @@ package controllers;
 
 import database.daos.UserDao;
 import models.User;
-import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -22,16 +21,22 @@ public class UserController extends Controller {
     private final HttpExecutionContext executionContext;
 
     @Inject
-    public UserController(FormFactory formFactory, UserDao userDao, HttpExecutionContext executionContext) {
+    public UserController(UserDao userDao, HttpExecutionContext executionContext) {
         this.userDao = userDao;
         this.executionContext = executionContext;
     }
 
     public Result loginPage(Http.Request request) {
+        if (request.session().get("identity").isPresent()) {
+            return redirect("/");
+        }
         return ok(views.html.login.render(null, request));
     }
 
     public Result registerPage(Http.Request request) {
+        if (request.session().get("identity").isPresent()) {
+            return redirect("/");
+        }
         return ok(views.html.register.render(null, request));
     }
 
@@ -60,7 +65,8 @@ public class UserController extends Controller {
                 if (created_user == null) {
                     return ok(views.html.login.render("User already exists", request));
                 } else {
-                    return ok("User created: " + toJson(created_user));
+                    return redirect("/")
+                        .addingToSession(request, "identity", created_user.getUsername());
                 }
             }, executionContext.current());
     }
@@ -73,7 +79,8 @@ public class UserController extends Controller {
                 if (user == null) {
                     return ok(views.html.login.render("Bad credentials", request));
                 } else {
-                    return ok("Logged in: " + toJson(user));
+                    return redirect("/")
+                        .addingToSession(request, "identity", user.getUsername());
                 }
             }, executionContext.current());
     }
@@ -86,14 +93,17 @@ public class UserController extends Controller {
         String username = params.get("username")[0];
         String password = params.get("password")[0];
         return userDao.findByNameAndPassword(username, password)
-                .thenApplyAsync(existing_user -> {
-                    if (existing_user == null) {
-                        return ok("User does not exist");
-                    }
-                    else {
-                        return ok("User deleted correctly");
-                    }
-                }, executionContext.current());
+            .thenApplyAsync(existing_user -> {
+                if (existing_user == null) {
+                    return ok("User does not exist");
+                } else {
+                    return ok("User deleted correctly");
+                }
+            }, executionContext.current());
+    }
+
+    public Result logout(Http.Request request) {
+        return redirect("/").removingFromSession(request, "identity");
     }
 
     public CompletionStage<Result> getAll() {

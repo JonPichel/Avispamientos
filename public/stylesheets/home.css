@@ -11,7 +11,6 @@ button {
     width: 120px;
 }
 
-
 button:hover {
     border: 3px solid var(--green);
 }
@@ -26,12 +25,44 @@ button:hover {
     right: 20px;
 }
 
+#radius-div {
+    position: absolute;
+    z-index: 400;
+    bottom: 20px;
+    right: 20px;
+    display: block;
+    float: left;
+}
+
+#radius-div p {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    background-color: var(--gray);
+    color: var(--white);
+    border: 3px solid var(--yellow);
+    width: 50px;
+}
+
+#radius-slider {
+    bottom: 20px;
+    right: 20px;
+}
+
 .purple-marker {
     filter: hue-rotate(60deg);
 }
 
+.magenta-marker {
+    filter: hue-rotate(90deg);
+}
+
 .pink-marker {
     filter: hue-rotate(120deg);
+}
+
+.red-marker {
+    filter: hue-rotate(150deg);
 }
 
 .orange-marker {
@@ -42,6 +73,5 @@ button:hover {
     filter: hue-rotate(240deg);
 }
 
-.rotate-hue {
-    filter: hue-rotate(190deg);
-}
+
+
