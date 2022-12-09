@@ -1,11 +1,14 @@
 $(document).ready(() => {
     initMap();
+
+    $("#si-btn").click(changeSightingData);
 });
 
 let map;
 let userLocation;
-let sightingMarkers = [];
+let sightings = [];
 let radiusCircle = null;
+let selectedSighting = null;
 
 class UserLocation {
      constructor(lat, lon, radius) {
@@ -48,6 +51,7 @@ function initMap() {
     $("#locate-btn").click(locateMe);
     $("#add-btn").click(createSighting);
     $("#radius-slider").on("input change", changeRadius);
+    $("#change-location-btn").click(changeLocation);
 }
 
 function loadLastLocation() {
@@ -129,19 +133,23 @@ function createSighting() {
 }
 
 function loadNearSightings() {
-    sightingMarkers.forEach(sightingMarker => map.removeLayer(sightingMarker));
-    sightingMarkers = [];
+    sightings.forEach(marker => map.removeLayer(marker));
+    sightings = [];
 
     fetch(document.location.origin + "/sightings?" + userLocation.toRequest())
         .then(response => response.json())
-        .then(sightings => {
-            sightings.forEach(sighting => {
-                let sightingMarker = new L.marker([
+        .then(nearSightings => {
+            nearSightings.forEach(sighting => {
+                const marker = new L.marker([
                     sighting.latitude,
                     sighting.longitude
                 ]).addTo(map);
-                //sightingMarker._icon.classList.add("yellow-marker");
-                sightingMarkers.push(sightingMarker);
+                if (sighting.creator === identity) {
+                    marker._icon.classList.add("purple-marker");
+                }
+                marker.sighting = sighting;
+                marker.on("click", showSightingInfo);
+                sightings.push(marker);
             });
         });
 }
@@ -166,11 +174,81 @@ function showRadiusCircle() {
     radiusCircle = circle;
 
     setTimeout(() => {
-        $(".smooth-hide").animate({ opacity: 0 }, 1000, () => {
+        $(".smooth-hide").fadeOut(1000, () => {
             if (circle === radiusCircle) {
                 map.removeLayer(radiusCircle);
                 radiusCircle = null;
             }
         });
     }, 1000);
+}
+
+function showSightingInfo(event) {
+    const sighting = event.target.sighting;
+
+    disableSIEdit();
+
+    if ($("#sighting-info").is(":hidden")) {
+        $("#sighting-info").fadeIn();
+    }
+
+    if (selectedSighting === null || sighting.id !== selectedSighting.id) {
+        const fields = $("#sighting-info p");
+        fields[0].innerText = convertDMS(sighting.latitude, sighting.longitude);
+        fields[1].innerText = "Created by: " + sighting.creator;
+        fields[2].innerText = "On: " + new Date(sighting.timestamp);
+        selectedSighting = sighting;
+    } else {
+        $("#sighting-info").fadeOut();
+        selectedSighting = null;
+    }
+}
+
+function changeLocation() {
+    alert("Click anywhere on the map to place your location");
+    $(".leaflet-container").css("cursor", "pointer");
+    map.on("click", (event) => {
+        map.off("click");
+        const locationMarker = new L.marker(event.latlng, { draggable: true }).addTo(map);
+        locationMarker._icon.classList.add("red-marker");
+        locationMarker.on("dblclick",() => {
+            locationMarker.off("dblclick");
+            locationMarker.dragging.disable();
+
+            userLocation.latitude = locationMarker.getLatLng().lat;
+            userLocation.longitude = locationMarker.getLatLng().lng;
+
+            // Remember this location next time
+            setCookie("last-location", "", 0);
+            setCookie("last-location", userLocation.toCookie(), 24*3600);
+
+            showRadiusCircle();
+            loadNearSightings();
+
+            map.removeLayer(locationMarker);
+        });
+
+        locationMarker.addTo(map);
+        $(".leaflet-container").css("cursor", "");
+    });
+}
+
+function changeSightingData() {
+    const textarea = $("#si-form textarea")[0];
+
+    if (textarea.disabled) {
+        enableSIEdit();
+    } else {
+        disableSIEdit();
+    }
+}
+
+function disableSIEdit() {
+    $("#si-form textarea")[0].disabled = true;
+    $("#si-btn").html("Edit");
+}
+
+function enableSIEdit() {
+    $("#si-form textarea")[0].disabled = false;
+    $("#si-btn").html("Save");
 }

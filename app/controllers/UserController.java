@@ -1,5 +1,7 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.daos.UserDao;
 import models.User;
 import play.libs.concurrent.HttpExecutionContext;
@@ -79,6 +81,7 @@ public class UserController extends Controller {
                 if (user == null) {
                     return ok(views.html.login.render("Bad credentials", request));
                 } else {
+                    // TODO: Remove user from database
                     return redirect("/")
                         .addingToSession(request, "identity", user.getUsername());
                 }
@@ -86,18 +89,30 @@ public class UserController extends Controller {
     }
 
     public CompletionStage<Result> unsubscribe(Http.Request request) {
+        if (request.session().get("identity").isEmpty()) {
+            return CompletableFuture.supplyAsync(() ->
+                ok(views.html.unsubscribe.render("Unauthorized: Login before trying again", request)));
+        }
+
         Map<String, String[]> params = request.body().asFormUrlEncoded();
         if (!params.containsKey("username") || !params.containsKey("password")) {
-            return CompletableFuture.supplyAsync(() -> ok(views.html.unsubscribe.render("Bad request", request)));
+            return CompletableFuture.supplyAsync(() ->
+                ok(views.html.unsubscribe.render("Bad request", request)));
         }
         String username = params.get("username")[0];
         String password = params.get("password")[0];
+
+        if (!request.session().get("identity").get().equals(username)) {
+            return CompletableFuture.supplyAsync(() ->
+                ok(views.html.unsubscribe.render("Unauthorized: Login before trying again!", request)));
+        }
+
         return userDao.findByNameAndPassword(username, password)
             .thenApplyAsync(existing_user -> {
                 if (existing_user == null) {
-                    return ok("User does not exist");
+                    return ok(views.html.unsubscribe.render("Bad credentials", request));
                 } else {
-                    return ok("User deleted correctly");
+                    return redirect("/").removingFromSession(request, "identity");
                 }
             }, executionContext.current());
     }

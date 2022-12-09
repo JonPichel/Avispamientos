@@ -43,9 +43,5 @@ html, body, #container {
 #content {
     flex-grow: 1;
     position: relative;
-}
-
-#map {
-    width: 100%;
-    height: 100%;
+    padding: 3px 0;
 }

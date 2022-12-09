@@ -18,7 +18,7 @@ public class Sighting {
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
     private String id;
-    @Column private String data;
+    @Column private String information;
     @Column private double latitude;
     @Column private double longitude;
     @Column private long timestamp;
@@ -34,8 +34,8 @@ public class Sighting {
     @Transient
     final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Sighting(String data, double latitude, double longitude, User creator) {
-        this.data = data;
+    public Sighting(String information, double latitude, double longitude, User creator) {
+        this.information = information;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timestamp = Instant.now().toEpochMilli();
@@ -48,6 +48,14 @@ public class Sighting {
     }
 
     public String getId() { return id; }
+
+    public String getInformation() {
+        return information;
+    }
+
+    public void setInformation(String information) {
+        this.information = information;
+    }
 
     public double getLatitude() {
         return latitude;
