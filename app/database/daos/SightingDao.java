@@ -16,6 +16,8 @@ import java.util.stream.Stream;
 
 public class SightingDao extends Dao {
 
+    final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
     public SightingDao(JPAApi jpaApi, DatabaseExecutionContext executionContext) {
         super(jpaApi, executionContext);
@@ -26,6 +28,21 @@ public class SightingDao extends Dao {
             em.persist(sighting);
             return sighting;
         }), executionContext);
+    }
+
+    public CompletionStage<Sighting> update(Sighting sighting) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            em.merge(sighting);
+            return sighting;
+        }), executionContext);
+    }
+
+    public CompletionStage<Sighting> delete(Sighting sighting) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            Sighting s = em.merge(sighting);
+            em.remove(s);
+            return null;
+        }));
     }
 
     public CompletionStage<Stream<Sighting>> getAll() {

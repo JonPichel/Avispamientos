@@ -3,6 +3,7 @@ package database.daos;
 import database.Dao;
 import database.DatabaseExecutionContext;
 import models.Confirmation;
+import models.Sighting;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -22,6 +23,21 @@ public class ConfirmationDao extends Dao {
             em.persist(confirmation);
             return confirmation;
         }), executionContext);
+    }
+
+    public CompletionStage<Confirmation> update(Confirmation confirmation) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            em.merge(confirmation);
+            return confirmation;
+        }), executionContext);
+    }
+
+    public CompletionStage<Confirmation> delete(Confirmation confirmation) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            Confirmation c = em.merge(confirmation);
+            em.remove(c);
+            return null;
+        }));
     }
 
     public CompletionStage<Stream<Confirmation>> getAll() {

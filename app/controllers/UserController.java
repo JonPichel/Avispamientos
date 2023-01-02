@@ -1,9 +1,11 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import database.daos.ConfirmationDao;
+import database.daos.SightingDao;
 import database.daos.UserDao;
 import models.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
 import play.mvc.Http;
@@ -20,10 +22,18 @@ import static play.libs.Json.toJson;
 public class UserController extends Controller {
 
     private final UserDao userDao;
+
     private final HttpExecutionContext executionContext;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Inject
-    public UserController(UserDao userDao, HttpExecutionContext executionContext) {
+    public UserController(
+        UserDao userDao,
+        SightingDao sightingDao,
+        ConfirmationDao confirmationDao,
+        HttpExecutionContext executionContext
+    ) {
         this.userDao = userDao;
         this.executionContext = executionContext;
     }
@@ -108,10 +118,11 @@ public class UserController extends Controller {
         }
 
         return userDao.findByNameAndPassword(username, password)
-            .thenApplyAsync(existing_user -> {
-                if (existing_user == null) {
+            .thenApplyAsync(existingUser -> {
+                if (existingUser == null) {
                     return ok(views.html.unsubscribe.render("Bad credentials", request));
                 } else {
+                    userDao.delete(existingUser);
                     return redirect("/").removingFromSession(request, "identity");
                 }
             }, executionContext.current());

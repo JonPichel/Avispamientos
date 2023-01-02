@@ -26,6 +26,21 @@ public class UserDao extends Dao {
         }), executionContext);
     }
 
+    public CompletionStage<User> update(User user) {
+        return CompletableFuture.supplyAsync(() -> wrap(em -> {
+            em.merge(user);
+            return user;
+        }), executionContext);
+    }
+
+    public void delete(User user) {
+        CompletableFuture.supplyAsync(() -> wrap(em -> {
+            User u = em.merge(user);
+            em.remove(u);
+            return null;
+        }), executionContext);
+    }
+
     public CompletionStage<Stream<User>> getAll() {
         return CompletableFuture.supplyAsync(() -> wrap(em -> {
             return em.createQuery("SELECT user FROM User user", User.class)

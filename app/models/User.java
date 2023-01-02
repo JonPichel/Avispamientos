@@ -15,11 +15,11 @@ public class User {
     @Column private String password;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "creator", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Sighting> sightings;
 
     @JsonIgnore
-    @OneToMany (mappedBy = "contributor", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "contributor", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Confirmation> confirmations;
 
     public User(String username, String password) {

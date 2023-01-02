@@ -1,7 +1,8 @@
 $(document).ready(() => {
     initMap();
 
-    $("#si-btn").click(changeSightingData);
+    $("#si-btn").click(changeSightingInformation);
+    $("#srm-btn").click(deleteSighting);
 });
 
 let map;
@@ -9,6 +10,8 @@ let userLocation;
 let sightings = [];
 let radiusCircle = null;
 let selectedSighting = null;
+
+const RADIUS = [100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000, 30000, 50000, 70000, 100000];
 
 class UserLocation {
      constructor(lat, lon, radius) {
@@ -155,9 +158,8 @@ function loadNearSightings() {
 }
 
 function changeRadius() {
-    const values = [100, 200, 300, 500, 1000, 2000, 3000, 5000, 10000, 30000, 50000, 70000, 100000];
-    $("#radius-div p")[0].innerText = values[$(this).val()];
-    userLocation.radius = values[$(this).val()];
+    $("#radius-div p")[0].innerText = RADIUS[$(this).val()];
+    userLocation.radius = RADIUS[$(this).val()];
 
     showRadiusCircle();
     loadNearSightings();
@@ -197,6 +199,7 @@ function showSightingInfo(event) {
         fields[0].innerText = convertDMS(sighting.latitude, sighting.longitude);
         fields[1].innerText = "Created by: " + sighting.creator;
         fields[2].innerText = "On: " + new Date(sighting.timestamp);
+        $("#si-form textarea")[0].value = sighting.information;
         selectedSighting = sighting;
     } else {
         $("#sighting-info").fadeOut();
@@ -215,8 +218,14 @@ function changeLocation() {
             locationMarker.off("dblclick");
             locationMarker.dragging.disable();
 
-            userLocation.latitude = locationMarker.getLatLng().lat;
-            userLocation.longitude = locationMarker.getLatLng().lng;
+            const lat = locationMarker.getLatLng().lat;
+            const lng = locationMarker.getLatLng().lng;
+            if (userLocation) {
+                userLocation.latitude = lat;
+                userLocation.longitude = lng;
+            } else {
+                userLocation = new UserLocation(lat, lng, 10_000);
+            }
 
             // Remember this location next time
             setCookie("last-location", "", 0);
@@ -233,22 +242,72 @@ function changeLocation() {
     });
 }
 
-function changeSightingData() {
+function changeSightingInformation() {
     const textarea = $("#si-form textarea")[0];
 
-    if (textarea.disabled) {
+    if (textarea.disabled && identity === selectedSighting.creator) {
         enableSIEdit();
     } else {
         disableSIEdit();
+
+        // Update the sighting information
+        const information = textarea.value;
+        fetch(document.location.origin + "/update_sighting", {
+            method: "PUT",
+            credentials: "include",
+            headers: {
+                "Csrf-Token": getCookie("csrf-token"),
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                sightingId: selectedSighting.id,
+                information: information,
+            }),
+        })
+            .then(response => response.json())
+            .then(jsonResponse => {
+                if (jsonResponse.error !== undefined) {
+                    console.log(jsonResponse.error);
+                } else {
+                    selectedSighting.information = jsonResponse.information;
+                }
+            });
     }
 }
 
 function disableSIEdit() {
     $("#si-form textarea")[0].disabled = true;
-    $("#si-btn").html("Edit");
+    const button = $("#si-btn")[0];
+    console.log(button.classList);
+    button.classList.remove("mdi-content-save");
+    button.classList.add("mdi-pencil");
 }
 
 function enableSIEdit() {
     $("#si-form textarea")[0].disabled = false;
-    $("#si-btn").html("Save");
+    const button = $("#si-btn")[0];
+    button.classList.remove("mdi-pencil");
+    button.classList.add("mdi-content-save");
+}
+
+function deleteSighting() {
+    fetch(document.location.origin + "/delete_sighting/" + selectedSighting.id, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+            "Csrf-Token": getCookie("csrf-token"),
+            "Content-Type": "application/json",
+        },
+    })
+        .then(response => response.json())
+        .then(jsonResponse => {
+            console.log(jsonResponse);
+            if (jsonResponse.id !== undefined) {
+                $("#sighting-info").fadeOut();
+                selectedSighting = null;
+                loadNearSightings();
+            } else {
+                console.log(jsonResponse.error);
+            }
+        });
 }

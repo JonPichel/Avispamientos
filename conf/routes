@@ -19,6 +19,8 @@ GET     /users/:username            controllers.UserController.getByName(usernam
 GET     /sightings                  controllers.SightingController.getNearSightings(latitude: Double, longitude: Double, radius: Int)
 POST    /sighting                   controllers.SightingController.create(request: Request)
 GET     /sighting_creator           controllers.SightingController.getCreator(sightingId: String)
+PUT     /update_sighting            controllers.SightingController.updateSighting(request: Request)
+DELETE  /delete_sighting/:id        controllers.SightingController.deleteSighting(request: Request, id: String)
 
 # Confirmation CRUD
 GET     /confirmations              controllers.ConfirmationController.getAll

@@ -28,7 +28,7 @@ public class Sighting {
     private User creator;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "sighting", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "sighting", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<Confirmation> confirmations;
 
     @Transient
@@ -96,7 +96,6 @@ public class Sighting {
         double a = Math.pow(Math.sin(dLat/2), 2) +
             Math.cos(lat2) * Math.cos(lat1) * Math.pow(Math.sin(dLon/2), 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        logger.warn("Testing 2");
         logger.warn(Double.toString(6371_000 * c));
         return (int)Math.round(6371_000 * c);
     }
