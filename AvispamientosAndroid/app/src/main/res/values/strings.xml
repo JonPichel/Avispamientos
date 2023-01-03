@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Avispamientos</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_repeat">Repeat password</string>
+    <string name="login_button">Sign in</string>
+    <string name="register_button">Register</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="login_failed">"Login failed"</string>
+</resources>

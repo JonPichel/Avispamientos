@@ -3,6 +3,7 @@ $(document).ready(() => {
 
     $("#si-btn").click(changeSightingInformation);
     $("#srm-btn").click(deleteSighting);
+    $("#confirm-btn").click(createOrPublishConfirmation);
 });
 
 let map;
@@ -310,4 +311,25 @@ function deleteSighting() {
                 console.log(jsonResponse.error);
             }
         });
+}
+
+function createOrPublishConfirmation() {
+    const form = $("#confirmation-form");
+    const button = $("#confirm-btn")[0];
+    const textarea = $("#confirmation-form textarea")[0];
+    console.log(form.is(":hidden"));
+    if (form.is(":hidden")) {
+        // Create
+        form.fadeIn();
+        textarea.value = "";
+        button.classList.remove("mdi-message");
+        button.classList.add("mdi-send");
+    } else {
+        // Confirm
+        console.log(textarea.value);
+        button.classList.remove("mdi-send");
+        button.classList.add("mdi-message");
+        form.fadeOut();
+        textarea.value = "";
+    }
 }

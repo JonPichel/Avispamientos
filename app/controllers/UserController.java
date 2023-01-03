@@ -30,8 +30,6 @@ public class UserController extends Controller {
     @Inject
     public UserController(
         UserDao userDao,
-        SightingDao sightingDao,
-        ConfirmationDao confirmationDao,
         HttpExecutionContext executionContext
     ) {
         this.userDao = userDao;

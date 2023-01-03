@@ -87,6 +87,14 @@ button:hover {
     margin-left: 15px;
 }
 
+#confirmations {
+
+}
+
+#confirmations p {
+
+}
+
 .purple-marker {
     filter: hue-rotate(60deg);
 }

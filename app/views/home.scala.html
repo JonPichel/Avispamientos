@@ -35,7 +35,7 @@
             <div id="content">
                 <div id="map"></div>
                 <div id="top-right-controls">
-                    <div style="display: flex; flex-direction: row">
+                    <div>
                         <button class="control-btn" id="locate-btn">Locate me</button>
                         <button class="control-btn" id="change-location-btn">Change Location</button>
                     </div>
@@ -56,8 +56,16 @@
                             <label for="sighting-info-text">Sighting information</label>
                             <textarea style="width: 90%" rows="5" cols="" maxlength="140" name="si-text"></textarea>
                         </form>
-                        <button id="si-btn" class="mdi mdi-pencil"></button>
-                        <button id="srm-btn" class="mdi mdi-delete"></button>
+                        <div style="padding: 10px">
+                            <button id="confirm-btn" class="mdi mdi-message"></button>
+                            <button id="si-btn" style="float: right" class="mdi mdi-pencil"></button>
+                            <button id="srm-btn" style="float: right" class="mdi mdi-delete"></button>
+                        </div>
+                        <form id="confirmation-form" style="display: none">
+                            <label for="confirmation-text">Confirmation text</label>
+                            <textarea style="width: 90%" rows="5" cols="" maxlength="140" name="confirmation-text"></textarea>
+                        </form>
+                        <div id="confirmations"></div>
                     </div>
                 </div>
             </div>
