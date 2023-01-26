@@ -6,9 +6,12 @@
 <html lang="en">
     <head>
         <title>Avispamientos - Login</title>
+        <link rel="icon" type="image/png" href="images/LogoPest.png" />
+
         @* Stylesheets *@
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/form.css")">
+
         @* JQuery *@
         <script src="@routes.Assets.versioned("javascripts/jquery-3.6.1.js")"></script>
         @* Leaflet *@
@@ -16,6 +19,13 @@
         <script src="@routes.Assets.versioned("javascripts/leaflet.js")"></script>
     </head>
     <body>
+        <style>
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        </style>
         <div id="container">
             <div id="nav">
                 <a class="active" href="/">Home</a>
@@ -25,7 +35,7 @@
             <div id="content">
                 <form action="/login" method="POST">
                     <div class="img-container">
-                        <img src="@routes.Assets.versioned("images/favicon.png")" alt="Logo">
+                        <img src="@routes.Assets.versioned("images/LogoWeb.png")" alt="Logo" class="center">
                     </div>
                     <label for="username"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="username" required>

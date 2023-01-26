@@ -16,6 +16,13 @@
         <script src="@routes.Assets.versioned("javascripts/leaflet.js")"></script>
     </head>
     <body>
+        <style>
+        img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        </style>
         <div id="container">
             <div id="nav">
                 <a class="active" href="/">Home</a>
@@ -25,7 +32,7 @@
             <div id="content">
                 <form action="/register" onsubmit="return validateForm()" method="POST">
                     <div class="img-container">
-                        <img src="@routes.Assets.versioned("images/favicon.png")" alt="Logo">
+                        <img src="@routes.Assets.versioned("images/LogoWeb.png")" alt="Logo" class="center">
                     </div>
                     <label for="username"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="username" required>

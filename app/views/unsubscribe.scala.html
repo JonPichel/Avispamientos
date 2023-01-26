@@ -25,6 +25,9 @@
             </div>
             <div id="content">
                 <form action="/unsubscribe" onsubmit="return validateForm()" method="POST">
+                    <div class="img-container">
+                        <img src="@routes.Assets.versioned("images/LogoWeb.png")" alt="Logo" class="center">
+                    </div>
                     <label for="username"><b>Username</b></label>
                     <input type="text" placeholder="Enter Username" name="username" required>
                     <label for="password"><b>Password</b></label>
