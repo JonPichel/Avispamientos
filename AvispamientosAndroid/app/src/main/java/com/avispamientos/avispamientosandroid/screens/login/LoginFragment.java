@@ -15,6 +15,7 @@ import androidx.fragment.app.Fragment;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.avispamientos.avispamientosandroid.MainActivity;
@@ -36,19 +37,10 @@ public class LoginFragment extends Fragment {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final Button registerButton = binding.register;
-        final ProgressBar loadingProgressBar = binding.loading;
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ((MainActivity)getActivity()).goToRegister();
-            }
-        });
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
-            }
+        registerButton.setOnClickListener(view -> ((MainActivity)getActivity()).goToRegister());
+        loginButton.setOnClickListener(view -> {
+            login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
         });
 
         return binding.getRoot();
@@ -61,18 +53,22 @@ public class LoginFragment extends Fragment {
     }
 
     public void login(String username, String password) {
-        String url = "http://192.168.1.136:9000/login";
-        StringRequest request = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Toast.makeText(getContext(), "Got response!", Toast.LENGTH_LONG).show();
+        String url = "http://192.168.1.130:9000/android/login";
+        ProgressBar loadingProgressBar = binding.loading;
+        StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
+            loadingProgressBar.setVisibility(View.GONE);
+            Log.i("AVISPAMIENTOS", "Login response: " + response);
+            if (response.startsWith("OK")) {
+                ((MainActivity)getActivity()).goToSightings();
             }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e("AVISPAMIENTOS", error.toString());
-                Toast.makeText(getContext(), "Got error!", Toast.LENGTH_LONG).show();
+            else {
+                Toast.makeText(getContext(), response,
+                        Toast.LENGTH_LONG).show();
             }
+        }, error -> {
+            loadingProgressBar.setVisibility(View.GONE);
+            Log.e("AVISPAMIENTOS", error.toString());
+            Toast.makeText(getContext(), "Got error!", Toast.LENGTH_LONG).show();
         }) {
             @Override
             protected Map<String, String> getParams() {
@@ -84,6 +80,6 @@ public class LoginFragment extends Fragment {
         };
         Volley.newRequestQueue(getContext()).add(request);
 
-        // TODO: change fragment
+        loadingProgressBar.setVisibility(View.VISIBLE);
     }
 }

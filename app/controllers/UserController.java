@@ -1,5 +1,7 @@
 package controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.daos.ConfirmationDao;
 import database.daos.SightingDao;
 import database.daos.UserDao;
@@ -141,5 +143,47 @@ public class UserController extends Controller {
         return userDao
             .findByName(username)
             .thenApplyAsync(user -> ok(toJson(user)), executionContext.current());
+    }
+
+    /* ANDROID */
+    public CompletionStage<Result> androidRegister(Http.Request request) {
+        Map<String, String[]> params = request.body().asFormUrlEncoded();
+        if (!params.containsKey("username") || !params.containsKey("password")) {
+            return CompletableFuture.supplyAsync(() -> ok("ERROR: Bad request"));
+        }
+        String username = params.get("username")[0];
+        String password = params.get("password")[0];
+        return userDao.findByName(username)
+            .thenApplyAsync(existing_user -> {
+                if (existing_user == null) {
+                    User user = new User(username, password);
+                    userDao.save(user);
+                    return user;
+                } else {
+                    return null;
+                }
+            }, executionContext.current())
+            .thenApplyAsync(created_user -> {
+                if (created_user == null) {
+                    return ok("ERROR: User already exists");
+                } else {
+                    return ok("OK")
+                        .addingToSession(request, "identity", created_user.getUsername());
+                }
+            }, executionContext.current());
+    }
+
+    public CompletionStage<Result> androidLogin(Http.Request request) {
+        Map<String, String[]> params = request.body().asFormUrlEncoded();
+        return userDao
+            .findByNameAndPassword(params.get("username")[0], params.get("password")[0])
+            .thenApplyAsync(user -> {
+                if (user == null) {
+                    return ok("ERROR: Bad credentials");
+                } else {
+                    return ok("OK")
+                        .addingToSession(request, "identity", user.getUsername());
+                }
+            }, executionContext.current());
     }
 }

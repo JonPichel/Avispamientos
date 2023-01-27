@@ -6,8 +6,8 @@ import androidx.fragment.app.Fragment;
 import android.os.Bundle;
 
 import com.avispamientos.avispamientosandroid.screens.login.LoginFragment;
-import com.avispamientos.avispamientosandroid.screens.login.RegisterFragment;
-import com.avispamientos.avispamientosandroid.screens.login.SightingsFragment;
+import com.avispamientos.avispamientosandroid.screens.register.RegisterFragment;
+import com.avispamientos.avispamientosandroid.screens.sightings.SightingsFragment;
 
 public class MainActivity extends AppCompatActivity {
 

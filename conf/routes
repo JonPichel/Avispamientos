@@ -2,6 +2,7 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+# Pages
 GET     /                           controllers.HomeController.homePage(request: Request)
 GET     /login                      controllers.UserController.loginPage(request: Request)
 GET     /register                   controllers.UserController.registerPage(request: Request)
@@ -12,8 +13,19 @@ GET     /logout                     controllers.UserController.logout(request: R
 POST    /login                      controllers.UserController.login(request: Request)
 POST    /register                   controllers.UserController.register(request: Request)
 POST    /unsubscribe                controllers.UserController.unsubscribe(request: Request)
-GET     /users                      controllers.UserController.getAll
-GET     /users/:username            controllers.UserController.getByName(username: String)
+# GET     /users                      controllers.UserController.getAll
+# GET     /users/:username            controllers.UserController.getByName(username: String)
+
+# Android
++nocsrf
++anyhost
+POST    /android/login              controllers.UserController.androidLogin(request: Request)
++nocsrf
++anyhost
+POST    /android/register           controllers.UserController.androidRegister(request: Request)
++nocsrf
++anyhost
+GET     /android/sightings          controllers.SightingController.androidSightings
 
 # Sighting CRUD
 GET     /sightings                  controllers.SightingController.getNearSightings(latitude: Double, longitude: Double, radius: Int)

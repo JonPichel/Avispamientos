@@ -2,18 +2,21 @@ package controllers;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.daos.SightingDao;
 import database.daos.UserDao;
 import models.Sighting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.libs.concurrent.HttpExecutionContext;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
@@ -176,11 +179,27 @@ public class SightingController extends Controller {
             }, executionContext.current());
     }
 
-    public CompletionStage<Result> getAll() {
+    public CompletionStage<Result> androidSightings() {
         return sightingDao
             .getAll()
-            .thenApplyAsync(sightingStream -> ok(toJson(sightingStream.collect(Collectors.toList()))),
-                executionContext.current());
+            .thenApplyAsync(sightingStream -> {
+                ObjectNode jsonResponse = Json.newObject();
+                ArrayNode jsonSightings = Json.newArray();
+                jsonResponse.putArray("sightings");
+                sightingStream.forEach(sighting -> {
+                    ObjectNode jsonSighting = Json.newObject();
+                    jsonSighting.put("id", sighting.getId());
+                    jsonSighting.put("creator", sighting.getCreatorUsername());
+                    jsonSighting.put("information", sighting.getInformation());
+                    jsonSighting.put("latitude", sighting.getLatitude());
+                    jsonSighting.put("longitude", sighting.getLongitude());
+                    jsonSighting.put("timestamp", sighting.getTimestamp());
+                    jsonSighting.put("confirmationCount", sighting.getConfirmations().size());
+                    jsonSightings.add(jsonSighting);
+                });
+                jsonResponse.set("sightings", jsonSightings);
+                return ok(jsonResponse);
+            }, executionContext.current());
     }
 
     public CompletionStage<Result> getCreator(String sightingId) {
