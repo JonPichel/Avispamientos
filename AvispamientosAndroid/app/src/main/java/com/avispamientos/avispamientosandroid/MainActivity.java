@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.avispamientos.avispamientosandroid.screens.login.LoginFragment;
 import com.avispamientos.avispamientosandroid.screens.register.RegisterFragment;
+import com.avispamientos.avispamientosandroid.screens.sightings.SightingDetailsFragment;
 import com.avispamientos.avispamientosandroid.screens.sightings.SightingsFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,6 +50,14 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragment_container, sightingsFragment)
+                .commit();
+    }
+
+    public void goToSightingDetails() {
+        Fragment sightingDetailsFragment = new SightingDetailsFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, sightingDetailsFragment)
                 .commit();
     }
 }
