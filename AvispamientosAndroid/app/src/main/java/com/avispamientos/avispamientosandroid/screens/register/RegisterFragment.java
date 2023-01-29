@@ -59,7 +59,7 @@ public class RegisterFragment extends Fragment {
     }
 
     public void register(String username, String password) {
-        String url = "http://192.168.1.130:9000/android/register";
+        String url = "http://10.192.36.31:9000/android/register";
         ProgressBar loadingProgressBar = binding.loading;
         StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
             loadingProgressBar.setVisibility(View.GONE);

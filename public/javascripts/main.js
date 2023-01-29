@@ -1,9 +1,11 @@
 $(document).ready(() => {
     initMap();
 
-    $("#si-btn").click(changeSightingInformation);
-    $("#srm-btn").click(deleteSighting);
-    $("#confirm-btn").click(createOrPublishConfirmation);
+    if (identity !== undefined) {
+        $("#si-btn").click(changeSightingInformation);
+        $("#srm-btn").click(deleteSighting);
+        $("#confirm-btn").click(createConfirmation);
+    }
 });
 
 let map;
@@ -189,7 +191,11 @@ function showRadiusCircle() {
 function showSightingInfo(event) {
     const sighting = event.target.sighting;
 
-    disableSIEdit();
+    if (identity !== "") {
+        disableSIEdit();
+    } else {
+        $("#si-form textarea")[0].disabled = true;
+    }
 
     if ($("#sighting-info").is(":hidden")) {
         $("#sighting-info").fadeIn();
@@ -200,6 +206,15 @@ function showSightingInfo(event) {
         fields[0].innerText = convertDMS(sighting.latitude, sighting.longitude);
         fields[1].innerText = "Created by: " + sighting.creator;
         fields[2].innerText = "On: " + new Date(sighting.timestamp);
+        if (sighting.confirmations.length !== 0) {
+            fields[3].innerText = "Confirmations: " + sighting.confirmations.length;
+            const lastConfirmation = sighting.confirmations[sighting.confirmations.length - 1];
+            fields[4].innerText = "Last confirmation on: " + new Date(lastConfirmation.timestamp)
+                + "(by " + lastConfirmation.contributor + ")";
+        } else {
+            fields[3].innerText = "No confirmations yet";
+            fields[4].innerText = "";
+        }
         $("#si-form textarea")[0].value = sighting.information;
         selectedSighting = sighting;
     } else {
@@ -313,23 +328,30 @@ function deleteSighting() {
         });
 }
 
-function createOrPublishConfirmation() {
-    const form = $("#confirmation-form");
-    const button = $("#confirm-btn")[0];
-    const textarea = $("#confirmation-form textarea")[0];
-    console.log(form.is(":hidden"));
-    if (form.is(":hidden")) {
-        // Create
-        form.fadeIn();
-        textarea.value = "";
-        button.classList.remove("mdi-message");
-        button.classList.add("mdi-send");
-    } else {
-        // Confirm
-        console.log(textarea.value);
-        button.classList.remove("mdi-send");
-        button.classList.add("mdi-message");
-        form.fadeOut();
-        textarea.value = "";
-    }
+function createConfirmation() {
+    fetch(document.location.origin + "/confirmation", {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Csrf-Token": getCookie("csrf-token"),
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            contributor: identity,
+            sighting: selectedSighting.id,
+        }),
+    })
+        .then(response => response.json())
+        .then(jsonResponse => {
+            console.log(jsonResponse);
+            if (jsonResponse.result == "ERROR") {
+                return;
+            }
+            const confirmation = jsonResponse.result;
+            const fields = $("#sighting-info p");
+            fields[3].innerText = "Confirmations: " + (selectedSighting.confirmations.length + 1);
+            fields[4].innerText = "Last confirmation on: " + new Date(confirmation.timestamp)
+                + "(by " + confirmation.contributor + ")";
+            selectedSighting.confirmations.push(confirmation);
+        })
 }

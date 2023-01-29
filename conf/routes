@@ -36,7 +36,7 @@ DELETE  /delete_sighting/:id        controllers.SightingController.deleteSightin
 
 # Confirmation CRUD
 GET     /confirmations              controllers.ConfirmationController.getAll
-GET     /create_confirmation        controllers.ConfirmationController.create(sightingId: String, contributor: String)
+POST    /confirmation               controllers.ConfirmationController.create(request: Request)
 
 
 # Map static resources from the /public folder to the /assets URL path

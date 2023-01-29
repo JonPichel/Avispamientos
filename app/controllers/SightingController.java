@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.daos.SightingDao;
 import database.daos.UserDao;
+import models.Confirmation;
 import models.Sighting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,6 +196,11 @@ public class SightingController extends Controller {
                     jsonSighting.put("longitude", sighting.getLongitude());
                     jsonSighting.put("timestamp", sighting.getTimestamp());
                     jsonSighting.put("confirmationCount", sighting.getConfirmations().size());
+                    if (sighting.getConfirmations().size() != 0) {
+                        Confirmation last = sighting.getConfirmations().get(sighting.getConfirmations().size() - 1);
+                        jsonSighting.put("lastTimestamp", last.getTimestamp());
+                        jsonSighting.put("lastContributor", last.getContributorUsername());
+                    }
                     jsonSightings.add(jsonSighting);
                 });
                 jsonResponse.set("sightings", jsonSightings);

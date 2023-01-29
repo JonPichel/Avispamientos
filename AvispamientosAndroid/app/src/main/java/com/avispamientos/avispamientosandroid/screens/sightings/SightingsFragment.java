@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.avispamientos.avispamientosandroid.AppViewModel;
 import com.avispamientos.avispamientosandroid.MainActivity;
 import com.avispamientos.avispamientosandroid.R;
 import com.avispamientos.avispamientosandroid.databinding.FragmentLoginBinding;
@@ -50,6 +52,8 @@ import java.util.Map;
 
 public class SightingsFragment extends Fragment {
 
+    private AppViewModel viewModel;
+
     private FragmentSightingsBinding binding;
     private SightingsAdapter adapter;
 
@@ -59,6 +63,8 @@ public class SightingsFragment extends Fragment {
 
         ListView listView = binding.listView;
 
+        viewModel = new ViewModelProvider(requireActivity()).get(AppViewModel.class);
+
         adapter = new SightingsAdapter(getContext(), R.layout.layout_sighting_item);
         listView.setAdapter(adapter);
 
@@ -67,7 +73,8 @@ public class SightingsFragment extends Fragment {
 
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
             Sighting sighting = ((SightingsAdapter)adapterView.getAdapter()).getSighting(i);
-            Toast.makeText(getContext(), "Clicked" + sighting.getId(), Toast.LENGTH_LONG).show();
+            viewModel.selectSighting(sighting);
+            ((MainActivity) getActivity()).goToSightingDetails();
         });
 
         return binding.getRoot();
@@ -80,7 +87,7 @@ public class SightingsFragment extends Fragment {
     }
 
     public void loadSightings() {
-        String url = "http://192.168.1.130:9000/android/sightings";
+        String url = "http://10.192.36.31:9000/android/sightings";
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             Log.i("AVISPAMIENTOS", "Sightings response: " + response);
             if (response.has("error")) {

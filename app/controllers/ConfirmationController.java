@@ -1,6 +1,9 @@
 package controllers;
 
 import akka.japi.Pair;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import database.daos.ConfirmationDao;
 import database.daos.SightingDao;
 import database.daos.UserDao;
@@ -9,6 +12,7 @@ import models.Sighting;
 import models.User;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
@@ -33,13 +37,18 @@ public class ConfirmationController extends Controller {
         this.executionContext = executionContext;
     }
 
-    public CompletionStage<Result> create(String sightingId, String contributor) {
-        System.out.println(sightingId + " " + contributor);
+    public CompletionStage<Result> create(Http.Request request) {
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode response = mapper.createObjectNode();
+
+        JsonNode jsonBody = request.body().asJson();
+        String contributor = jsonBody.get("contributor").asText();
+        String sightingId = jsonBody.get("sighting").asText();
         return userDao.findByName(contributor)
             .thenCombineAsync(sightingDao.findById(sightingId), (user, sighting) -> new Pair(user, sighting))
             .thenApplyAsync(pair -> {
-                User user = (User)pair.first();
-                Sighting sighting = (Sighting)pair.second();
+                User user = (User) pair.first();
+                Sighting sighting = (Sighting) pair.second();
                 if (user == null || sighting == null || Objects.equals(sighting.getCreator().getUsername(), user.getUsername())) {
                     return null;
                 } else {
@@ -50,9 +59,11 @@ public class ConfirmationController extends Controller {
             }, executionContext.current())
             .thenApplyAsync(created_confirmation -> {
                 if (created_confirmation == null) {
-                    return ok("Error creating confirmation!");
+                    response.put("result", "ERROR");
+                    return ok(toJson(response));
                 } else {
-                    return ok("Created confirmation: " + toJson(created_confirmation));
+                    response.set("result", toJson(created_confirmation));
+                    return ok(toJson(response));
                 }
             }, executionContext.current());
     }

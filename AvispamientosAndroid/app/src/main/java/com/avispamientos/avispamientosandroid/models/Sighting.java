@@ -11,6 +11,8 @@ public class Sighting {
     private double latitude;
     private double longitude;
     private long timestamp;
+    private long lastTimestamp;
+    private String lastContributor;
     private int confirmationCount;
 
     public Sighting(JSONObject jsonObject) {
@@ -45,6 +47,14 @@ public class Sighting {
 
     public void setConfirmationCount(int confirmationCount) { this.confirmationCount = confirmationCount; }
 
+    public long getLastTimestamp() { return lastTimestamp; }
+
+    public void setLastTimestamp(long lastTimestamp) { this.lastTimestamp = lastTimestamp; }
+
+    public String getLastContributor() { return lastContributor; }
+
+    public void setLastContributor(String lastContributor) { this.lastContributor = lastContributor; }
+
     public void fromJson(JSONObject json) {
         try {
             this.id = json.getString("id");
@@ -53,6 +63,8 @@ public class Sighting {
             this.latitude = json.getDouble("latitude");
             this.longitude = json.getDouble("longitude");
             this.timestamp = json.getLong("timestamp");
+            this.lastTimestamp = json.optLong("lastTimestamp", -1);
+            this.lastContributor = json.optString("lastContributor", "");
             this.confirmationCount = json.getInt("confirmationCount");
         } catch (JSONException e) {
             e.printStackTrace();

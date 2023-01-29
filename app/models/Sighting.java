@@ -84,8 +84,8 @@ public class Sighting {
     }
 
     @JsonProperty("confirmations")
-    public List<String> getConfirmationIds() {
-        return confirmations.stream().map(Confirmation::getId).collect(Collectors.toList());
+    public List<Confirmation> getConfirmationIds() {
+        return new ArrayList<>(confirmations);
     }
 
     public int distanceToCoords(double latitude, double longitude) {

@@ -19,6 +19,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -28,9 +29,11 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.avispamientos.avispamientosandroid.AppViewModel;
 import com.avispamientos.avispamientosandroid.MainActivity;
 import com.avispamientos.avispamientosandroid.R;
 import com.avispamientos.avispamientosandroid.databinding.FragmentLoginBinding;
+import com.avispamientos.avispamientosandroid.databinding.FragmentSightingDetailsBinding;
 import com.avispamientos.avispamientosandroid.databinding.FragmentSightingsBinding;
 import com.avispamientos.avispamientosandroid.databinding.LayoutSightingItemBinding;
 import com.avispamientos.avispamientosandroid.models.Sighting;
@@ -50,22 +53,35 @@ import java.util.Map;
 
 public class SightingDetailsFragment extends Fragment {
 
-    /*
+    private AppViewModel viewModel;
     private FragmentSightingDetailsBinding binding;
-    private SightingDetailsAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentSightingDetailsBinding.inflate(inflater, container, false);
 
-        ListView listView = binding.listView;
+        viewModel = new ViewModelProvider(getActivity()).get(AppViewModel.class);
 
-        adapter = new SightingsFragment.SightingsAdapter(getContext(), R.layout.layout_sighting_item);
-        listView.setAdapter(adapter);
+        Sighting sighting = viewModel.getSelectedSighting().getValue();
 
-        // Make the request
-        loadSightingDetails();
+        binding.creator.setText(sighting.getCreator());
+        binding.creator.setText(sighting.getCreator());
+        DateFormat dateFormat = DateFormat.getDateTimeInstance();
+        String date = dateFormat.format(new Date(sighting.getTimestamp()));
+        binding.timestamp.setText(date);
+        String coordinates = String.format("%.8f N %.8f W", sighting.getLatitude(), sighting.getLongitude());
+        binding.coordinates.setText(coordinates);
+        binding.confirmationCount.setText(Integer.toString(sighting.getConfirmationCount()));
+        binding.information.setText(sighting.getInformation());
+        if (sighting.getConfirmationCount() != 0) {
+            date = dateFormat.format(new Date(sighting.getLastTimestamp()));
+            binding.lastConfirmation.setText(
+                    "Last confirmation on: " + date + "(by " + sighting.getLastContributor() + ")");
+        } else {
+            binding.lastConfirmation.setText("No confirmations yet");
+        }
 
+        binding.returnButton.setOnClickListener(view -> ((MainActivity) getActivity()).goToSightings());
         return binding.getRoot();
     }
 
@@ -74,10 +90,4 @@ public class SightingDetailsFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
-    public void loadSightings() {
-
-    }
-
-     */
 }

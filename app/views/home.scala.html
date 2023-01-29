@@ -5,6 +5,8 @@
     
     <head>
         <title>Avispamientos - Map view</title>
+        <link rel="icon" type="image/png" href="@routes.Assets.versioned("images/LogoWeb.png")" />
+
         @* Stylesheets *@
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/home.css")">
@@ -19,7 +21,6 @@
             crossorigin=""></script>
         @* Icons *@
         <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@@mdi/font@@6.9.96/css/materialdesignicons.min.css">
-        <link rel="icon" href="/images/LogoPest.png" type="image/png"/>
 
     </head>
     <body>
@@ -59,16 +60,16 @@
                             <label for="sighting-info-text">Sighting information</label>
                             <textarea style="width: 90%" rows="5" cols="" maxlength="140" name="si-text"></textarea>
                         </form>
-                        <div style="padding: 10px">
-                            <button id="confirm-btn" class="mdi mdi-message"></button>
-                            <button id="si-btn" style="float: right" class="mdi mdi-pencil"></button>
-                            <button id="srm-btn" style="float: right" class="mdi mdi-delete"></button>
-                        </div>
-                        <form id="confirmation-form" style="display: none">
-                            <label for="confirmation-text">Confirmation text</label>
-                            <textarea style="width: 90%" rows="5" cols="" maxlength="140" name="confirmation-text"></textarea>
-                        </form>
-                        <div id="confirmations"></div>
+                        <p>Confirmations: </p>
+                        <p>Last confirmation on: </p>
+                        @if(identity != null) {
+                            <div style="padding: 10px">
+                                <button id="confirm-btn" class="mdi mdi-check-all"></button>
+                                <button id="si-btn" style="float: right" class="mdi mdi-pencil"></button>
+                                <button id="srm-btn" style="float: right" class="mdi mdi-delete"></button>
+                            </div>
+                        }
+
                     </div>
                 </div>
             </div>

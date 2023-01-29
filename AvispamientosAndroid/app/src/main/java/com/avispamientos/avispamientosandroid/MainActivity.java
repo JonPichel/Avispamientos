@@ -2,6 +2,7 @@ package com.avispamientos.avispamientosandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
@@ -12,10 +13,14 @@ import com.avispamientos.avispamientosandroid.screens.sightings.SightingsFragmen
 
 public class MainActivity extends AppCompatActivity {
 
+    private AppViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        viewModel = new ViewModelProvider(this).get(AppViewModel.class);
 
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
 
